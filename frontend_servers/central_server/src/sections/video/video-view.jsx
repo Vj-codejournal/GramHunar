@@ -17,7 +17,7 @@ function VV() {
   const [chat, setChat] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [loady, setloady] = useState(false);
-  const genAI = new GoogleGenerativeAI("AIzaSyDMGiZds8QE2MquY0tm7N4qE4_zBUXOKM8");
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   async function gen(prompt) {
