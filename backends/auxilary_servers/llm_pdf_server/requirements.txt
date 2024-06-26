@@ -1,0 +1,10 @@
+Flask
+flask-cors
+langchain_community
+langchain
+langchain_google_genai
+google.generativeai
+numpy
+faiss-cpu
+python-dotenv
+pypdf

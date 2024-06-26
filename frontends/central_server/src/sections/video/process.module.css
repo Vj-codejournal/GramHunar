@@ -1,0 +1,71 @@
+/* src/components/CSR.css */
+
+.stack {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   gap: 20px;
+ }
+ 
+ .stepper {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   width: 100%;
+   padding: 20px;
+ }
+ 
+ .step {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   text-align: center;
+ }
+ 
+ .step-icon {
+   background-color: #ccc;
+   color: white;
+   width: 50px;
+   height: 50px;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   border-radius: 50%;
+   margin-bottom: 10px;
+   font-size: 24px;
+ }
+ 
+ .step-icon.active {
+   background-image: linear-gradient(
+     95deg,
+     rgb(242, 113, 33) 0%,
+     rgb(233, 64, 87) 50%,
+     rgb(138, 35, 135) 100%
+   );
+ }
+ 
+ .step-label {
+   font-size: 14px;
+   color: #555;
+ }
+ 
+ .stepper::before,
+ .stepper::after {
+   content: "";
+   flex: 1;
+   border-top: 3px solid #eaeaf0;
+   margin: 0 10px;
+ }
+ 
+ .stepper .step + .step::before {
+   content: "";
+   flex: 1;
+   border-top: 3px solid #eaeaf0;
+   margin: 0 10px;
+ }
+ 
+ .stepper .step.active + .step::before {
+   border-top: 3px solid #784af4;
+ }
+ 

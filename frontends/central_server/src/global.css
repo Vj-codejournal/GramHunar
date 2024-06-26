@@ -1,0 +1,49 @@
+/* scrollbar */
+@import 'simplebar-react/dist/simplebar.min.css';
+
+.loader {
+   width: 70px;
+   height : 30vh ; 
+   aspect-ratio: .75;
+   --c: no-repeat linear-gradient(45deg , violet , pink);
+   background: 
+     var(--c) 0%   50%,
+     var(--c) 50%  50%,
+     var(--c) 100% 50%;
+   animation: l7 1s infinite linear alternate;
+ }
+ @keyframes l7 {
+   0%  {background-size: 20% 50% ,20% 50% ,20% 50% }
+   20% {background-size: 20% 20% ,20% 50% ,20% 50% }
+   40% {background-size: 20% 100%,20% 20% ,20% 50% }
+   60% {background-size: 20% 50% ,20% 100%,20% 20% }
+   80% {background-size: 20% 50% ,20% 50% ,20% 100%}
+   100%{background-size: 20% 50% ,20% 50% ,20% 50% }
+ }
+ ::-webkit-scrollbar {
+  display: none;
+}
+
+
+.loader2 {
+  width: 70px;
+  height : 30vh ; 
+  aspect-ratio: .75;
+  --c: no-repeat linear-gradient(45deg , aqua  , #7FFFD4 , aqua) ; 
+  background: 
+    var(--c) 0%   50%,
+    var(--c) 50%  50%,
+    var(--c) 100% 50%;
+  animation: l7 1s infinite linear alternate;
+}
+@keyframes l7 {
+  0%  {background-size: 20% 50% ,20% 50% ,20% 50% }
+  20% {background-size: 20% 20% ,20% 50% ,20% 50% }
+  40% {background-size: 20% 100%,20% 20% ,20% 50% }
+  60% {background-size: 20% 50% ,20% 100%,20% 20% }
+  80% {background-size: 20% 50% ,20% 50% ,20% 100%}
+  100%{background-size: 20% 50% ,20% 50% ,20% 50% }
+}
+::-webkit-scrollbar {
+ display: none;
+}
