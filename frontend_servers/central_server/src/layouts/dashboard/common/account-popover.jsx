@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -8,10 +8,7 @@ import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-
-import { account } from 'src/_mock/account';
-
-// ----------------------------------------------------------------------
+import { curr_context } from '../../../contexts.jsx/Trainee'; // Ensure this path is correct
 
 const MENU_OPTIONS = [
   {
@@ -28,9 +25,26 @@ const MENU_OPTIONS = [
   },
 ];
 
-// ----------------------------------------------------------------------
-
 export default function AccountPopover() {
+  const now_context = useContext(curr_context);
+  const [account, set_account] = useState({
+    displayName: 'Jaydon Frankie',
+    email: 'demo@minimals.cc',
+    photoURL: '/assets/images/avatars/avatar_25.jpg',
+  });
+
+  useEffect(() => {
+    if (now_context?.trainee) {
+      set_account({
+        displayName: now_context.trainee.name,
+        email: now_context.trainee.emailId,
+        photoURL: '/assets/images/avatars/avatar_25.jpg',
+      });
+    }
+  }, [now_context]);
+
+  
+
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {

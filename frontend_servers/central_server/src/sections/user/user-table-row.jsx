@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState  , useContext , useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,10 +15,11 @@ import IconButton from '@mui/material/IconButton';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
-
+import {curr_context} from "../../contexts.jsx/Trainee"
 // ----------------------------------------------------------------------
 
 export default function UserTableRow({
+  id ,
   selected,
   name,
   avatarUrl,
@@ -27,7 +28,9 @@ export default function UserTableRow({
   isVerified,
   status,
   handleClick,
+  age ,
   grade,
+  rollNumber ,
   attendence
 }) {
   const [open, setOpen] = useState(null);
@@ -44,6 +47,7 @@ export default function UserTableRow({
   const handleCheckButtonClick = () => {
     navigate('/Info', {
       state: {
+        id , 
         name,
         avatarUrl,
         company,
@@ -51,10 +55,27 @@ export default function UserTableRow({
         isVerified,
         status,
         grade,
+        age ,
+        rollNumber ,
         attendence
       }
     });
   };
+  const [students , set_students] = useState({}) ;
+
+  const now_context = useContext(curr_context)
+  useEffect(()=>{
+    if(now_context.traineeID){
+     fetch(`${now_context.backend_url}/student/trainee/${now_context.traineeID}`)
+     .then(response => response.json())
+     .then(data => {set_students(data) ; console.log(data)})
+     .catch(error => console.error('Error:', error)); 
+    }
+
+ } , [now_context.traineeID]) 
+
+//  useEffect(()=>{console.log(students[0].name) ; } , [students])
+
 
   return (
     <>
@@ -72,20 +93,23 @@ export default function UserTableRow({
           </Stack>
         </TableCell>
 
-        <TableCell>{company}</TableCell>
-
         <TableCell>{role}</TableCell>
+        <TableCell>{role}</TableCell>
+        <TableCell align = "center">{company}</TableCell>
 
-        <TableCell align="center">{isVerified ? 'Yes' : 'No'}</TableCell>
 
-        <TableCell>
-          <Label color={(status === 'banned' && 'error') || 'success'}>
-            {`grade ${(status === 'banned') ? 'd' : 'a'}`}
+       
+
+        <TableCell align= "center">
+        <Label 
+            sx = {{backgroundColor : `${(grade === 'A' && 'green') ||(grade === 'B' && 'blue') ||(grade === 'C' && 'red')}` , color : 'white' , height : "4vh"}}
+          >
+            {`grade ${grade.toLowerCase()}`}
           </Label>
         </TableCell>
 
-        <TableCell>
-          <Button variant="contained" onClick={handleCheckButtonClick}>Check</Button>
+        <TableCell align = "center">
+          <Button variant="contained" onClick={handleCheckButtonClick} sx = {{height : "4vh"}}>Check</Button>
         </TableCell>
 
         <TableCell align="right">

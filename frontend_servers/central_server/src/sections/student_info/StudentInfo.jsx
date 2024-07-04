@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect , useContext  } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import Card from '@mui/material/Card';
@@ -11,7 +11,22 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import {curr_context} from '../../contexts.jsx/Trainee'
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import { ConstructionOutlined } from '@mui/icons-material';
+import Label from 'src/components/label/label';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  MenuItem
+} from '@mui/material';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs  } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateCalendar, DatePicker } from '@mui/x-date-pickers';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler);
 
@@ -31,18 +46,69 @@ const styles = {
   },
 };
 
-const generateRandomData = () => Array.from({ length: 10 }, () => Math.floor(Math.random() * 5) + 1);
 
 export default function StudentInfo() {
   const { state } = useLocation();
+  
   const [openModal, setOpenModal] = React.useState(false);
-
+  const now_context = useContext(curr_context) ;
   //..............................................................
 
   const [listeningSkills, setListeningSkills] = useState(0);
   const [attentionSpan, setAttentionSpan] = useState(0);
   const [curiosity, setCuriosity] = useState(0);
   const [reflectingAbility, setReflectingAbility] = useState(0);
+  const [bar_data , set_bar_data] = useState([0,0,0,0,0])
+  const [g_data , s_g_data] = useState({}) ;
+  const [length , set_length] = useState(0) ; 
+  const [data1 , set_data1] = useState([]) ; 
+  const [data2 , set_data2] = useState([]) ; 
+  const [data3 , set_data3] = useState([]) ; 
+  const [data4 , set_data4] = useState([]) ;  
+  const [total , set_total] = useState(100) ; 
+  const [atended , set_attended] = useState(80) ; 
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState(null);
+  const [marks, setMarks] = useState({
+    maths: '',
+    science: '',
+    socialScience: '',
+    english: '',
+    hindi: ''
+  });
+  const handleChange = (e) => {
+    setMarks({
+      ...marks,
+      [e.target.name]: e.target.value
+    });
+  };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = async () => {
+    const dot =  new Date(date).toISOString().split('T')[0]
+    const data = {
+    dot,
+      ...marks
+    };
+    console.log(data);
+
+    await fetch(`${now_context.backend_url}/attendence/subject/${state.id}` , {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+    set_bar_data([data.maths , data.science , data.socialScience   , data.english , data.hindi])
+    // idhar rukna 
+    handleClose();
+  };
 
   //..............................................................
 
@@ -54,13 +120,122 @@ export default function StudentInfo() {
     setOpenModal(false);
   };
   
+   useEffect(()=>{
 
+    const run = async()=>{
+      console.log(state.id)
+      await fetch(`${now_context.backend_url}/attendence/7/${state.id}` , {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate', 
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        let d1 = []
+        let d2 = []
+        let d3 = []
+        let d4 = []
+        s_g_data(data) ;
+        set_length(data.length) ; 
+        data.forEach(element => {
+          d1.push(element.ListeningSkills)
+          d2.push(element.AttentionSpan)
+          d3.push(element.Curiosity)
+          d4.push(element.ReflectingAbility)
+        });
+        set_data1(d1) ;
+        set_data2(d2) ;
+        set_data3(d3) ;
+        set_data4(d4) ;        
+      
+      }) ; 
+      await fetch(`${now_context.backend_url}/attendence/sum/${state.id}` , {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate', 
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+      })
+      .then(data=>data.json())
+      .then(data=>{ set_total(data.totalDays)  ; set_attended(data.totalAttendance)})
+      
+      await fetch(`${now_context.backend_url}/attendence/recent/${state.id}` , {
+        method: 'GET',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate', 
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+      })
+      .then(data=>data.json())
+      .then(data=>{
+        set_bar_data([data.data.maths , data.data.science , data.data.social , data.data.english , data.data.hindi])
+      })
+
+    }
+    run()
+
+   } , [])
+
+   useEffect(()=>{
+    console.log(g_data)
+    console.log(length)
+   } , [g_data])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  async function HS(){
+    console.log(state.id) ;
+    await fetch(`${now_context.backend_url}/attendence` , {
+      method: "POST",
+      body: JSON.stringify({
+        Student_id: state.id,
+        Ratings :{
+          ListeningSkills:listeningSkills , 
+          AttentionSpan : attentionSpan , 
+          Curiosity : curiosity ,
+          ReflectingAbility :reflectingAbility , 
+        },
+        Attendance : 'Yes',
+        traineeID : now_context.traineeID 
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+    setOpenModal(false);
+  }
+
+
+  let label = []
+  for(let i =0 ; i<length ; i++) label.push(`day${i+1}`)
+  
   const chartData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10'],
+    labels: label,
     datasets: [
       {
         label: 'Listening Skills',
-        data: generateRandomData(),
+        data: data1,
         backgroundColor: 'rgba(75,192,192,0.2)',
         borderColor: 'rgba(75,192,192,1)',
         borderWidth: 1,
@@ -69,7 +244,7 @@ export default function StudentInfo() {
       },
       {
         label: 'Attention Span',
-        data: generateRandomData(),
+        data: data2,
         backgroundColor: 'rgba(255,99,132,0.2)',
         borderColor: 'rgba(255,99,132,1)',
         borderWidth: 1,
@@ -78,7 +253,7 @@ export default function StudentInfo() {
       },
       {
         label: 'Curiosity',
-        data: generateRandomData(),
+        data: data3,
         backgroundColor: 'rgba(54,162,235,0.2)',
         borderColor: 'rgba(54,162,235,1)',
         borderWidth: 1,
@@ -87,7 +262,7 @@ export default function StudentInfo() {
       },
       {
         label: 'Reflecting Ability',
-        data: generateRandomData(),
+        data: data4,
         backgroundColor: 'rgba(255,206,86,0.2)',
         borderColor: 'rgba(255,206,86,1)',
         borderWidth: 1,
@@ -109,11 +284,11 @@ export default function StudentInfo() {
   };
 
   const barChartData = {
-    labels: ['Foundational Literacy', 'Foundational Numeracy', 'Social Emotional Literacy', 'Combined'],
+    labels: ['Maths', 'Science', 'Social', 'english' , 'hindi'],
     datasets: [
       {
-        label: 'Skills',
-        data: [60, 70, 80, 53],
+        label: 'Score',
+        data: bar_data,
         backgroundColor: [
           'rgba(75, 192, 192, 0.2)',
           'rgba(255, 99, 132, 0.2)',
@@ -162,10 +337,10 @@ export default function StudentInfo() {
   };
 
   const doughnutData = {
-    labels: ['', 'Attended'],
+    labels: ['', `Attended : ${(atended/total*100)}`],
     datasets: [
       {
-        data: [20, 80], // Assuming attendance is in percentage
+        data: [ 100-(atended/total*100) , (atended/total*100) ], // Assuming attendance is in percentage
         backgroundColor: ['rgba(255, 99, 132, 0)' ,'rgba(75, 192, 192, 0.2)', ],
         borderColor: ['rgba(255, 99, 132, 0)' , 'rgba(75, 192, 192, 1)', ],
         borderWidth: 1,
@@ -194,18 +369,86 @@ export default function StudentInfo() {
           <CardContent className='overflow-auto'>
             <Stack direction="row" spacing={2} alignItems="center" className='overflow-auto'>
               <Avatar alt={state.name} src={state.avatarUrl} sx={{ width: 56, height: 56 }} />
-              <div className='flex justify-between w-[25vw]'>
+              <div className='flex flex-wrap justify-between w-[25vw]'>
               <Typography variant="h5" component="div">
                 {state.name}
               </Typography>
-              <Button
-                variant='contained'
-                sx={{ backgroundColor: 'red', '&:hover': { backgroundColor: 'darkred' } }}
-              >
+              <Label 
+                  sx = {{backgroundColor : `${(state.grade === 'A' && 'green') ||(state.grade === 'B' && 'blue') ||(state.grade === 'C' && 'red')}` , color : 'white' , height : "4vh"}}
+                >
+                  {`grade ${state.grade.toLowerCase()}`}
+                </Label>
+                <Button
+        variant='contained'
+        sx={{ backgroundColor: 'red', '&:hover': { backgroundColor: 'darkred' } }}
+        onClick={handleClickOpen}
+      >
                 + academic
               </Button>
-              <Button variant='contained' onClick={handleOpenModal}> +  weekly report</Button>
-             
+              <Button variant='contained' onClick={handleOpenModal}> +  daily Report</Button>
+              <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add Academic Marks</DialogTitle>
+        <DialogContent>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date"
+              value={date}
+              onChange={(newValue) => setDate(newValue)}
+              renderInput={(params) => <TextField {...params} fullWidth />}
+              inputFormat="dd-MM-yyyy"
+            />
+          </LocalizationProvider>
+          <TextField
+            margin="dense"
+            name="maths"
+            label="Maths Marks"
+            type="number"
+            fullWidth
+            value={marks.maths}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="science"
+            label="Science Marks"
+            type="number"
+            fullWidth
+            value={marks.science}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="socialScience"
+            label="Social Science Marks"
+            type="number"
+            fullWidth
+            value={marks.socialScience}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="english"
+            label="English Marks"
+            type="number"
+            fullWidth
+            value={marks.english}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="hindi"
+            label="Hindi Marks"
+            type="number"
+            fullWidth
+            value={marks.hindi}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
              
              
              
@@ -217,7 +460,7 @@ export default function StudentInfo() {
         aria-describedby="modal-description"
       >
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4 }} className="w-[80vw] h-[80vh] rounded-xl">
-          <h2 id="modal-title" className='text-[4vh] bold-lg w-[80vw] flex justify-center mb-4'>WEEKLY REPORT</h2>
+          <h2 id="modal-title" className='text-[4vh] bold-lg w-[80vw] flex justify-center mb-4'>Daily Report</h2>
           <p id="modal-description" className='mb-4'>
           Socio-emotional education integrates emotional well-being with academics, fostering emotional intelligence and interpersonal skills. It enhances resilience, adaptability, and positive relationships, creating a supportive school climate that promotes holistic development.
           </p>
@@ -287,10 +530,9 @@ export default function StudentInfo() {
               />
             </div>
           </div>
-          <Button variant="contained"  onClick={handleCloseModal}>Close</Button>
+          <Button variant="contained"  onClick={HS}> submit </Button>
         </Box>
       </Modal>
-
 
 
 
@@ -315,28 +557,24 @@ export default function StudentInfo() {
               <table className="min-w-full bg-white">
                 <tbody>
                 <tr className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Grade</td>
-                    <td className="py-2 px-4 border-b border-gray-200">{state.grade}</td>
-                  </tr>
-                  <tr className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Role</td>
-                    <td className="py-2 px-4 border-b border-gray-200">{state.role}</td>
-                  </tr>
-                  <tr className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Company</td>
+                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Class</td>
                     <td className="py-2 px-4 border-b border-gray-200">{state.company}</td>
                   </tr>
                   <tr className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Verified</td>
-                    <td className="py-2 px-4 border-b border-gray-200">{state.isVerified ? 'Yes' : 'No'}</td>
+                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Roll NO.</td>
+                    <td className="py-2 px-4 border-b border-gray-200">{state.rollNumber}</td>
                   </tr>
+
+                  
+                  <tr className="hover:bg-gray-100">
+                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Age</td>
+                    <td className="py-2 px-4 border-b border-gray-200">{state.age}</td>
+                  </tr>
+
+
                   <tr className="hover:bg-gray-100">
                     <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Status</td>
                     <td className="py-2 px-4 border-b border-gray-200">{state.status}</td>
-                  </tr>
-                  <tr className="hover:bg-gray-100">
-                    <td className="py-2 px-4 border-b border-gray-200 text-gray-700">Attendance</td>
-                    <td className="py-2 px-4 border-b border-gray-200">{state.attendence}%</td>
                   </tr>
                 </tbody>
               </table>

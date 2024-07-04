@@ -2,12 +2,13 @@ import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { IoIosSend } from 'react-icons/io';
 import { curr_context } from './VideoSrc';
-import CSR from './Process';
-import DU from './Uploader';
+import DU from './uploader';
 import Card from '@mui/material/Card'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { marked } from 'marked';
-
+import Button from '@mui/material/Button'
+import html2pdf from 'html2pdf.js';
+import dotenv from 'dotenv'
 function VV() {
   const [state, setState] = useState(0);
   const [load, setLoad] = useState(false);
@@ -17,7 +18,9 @@ function VV() {
   const [chat, setChat] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [loady, setloady] = useState(false);
-  const genAI = new GoogleGenerativeAI("AIzaSyDMGiZds8QE2MquY0tm7N4qE4_zBUXOKM8");
+  const [boka , bokadoka] = useState(false) ; 
+  const [pp , spp] = useState(false) ; 
+  const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_KEY);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   async function gen(prompt) {
@@ -62,7 +65,7 @@ function VV() {
                 setChat((prevChat) => [...prevChat, { cont: ans, ai: true }]);
                 console.log(ans);
                 setTrans(ans);
-
+                spp(true)
                 setTimeout(() => setState(6), 1000);
                 setTimeout(() => setState(7), 1000);
               }
@@ -96,15 +99,156 @@ function VV() {
     setChat((prevChat) => [...prevChat, { cont: aiResponse, ai: true }]);
   };
 
+
+
+
+
+
+
+
+
+  const askTest = async () => {
+    bokadoka(true)
+    const prompt = `${full}\nUser: based on the full content 
+                  provide 10 long answer questions 
+                  with answer of all quaestions  at the end
+                  i.e make 2 sections questions section  and answers section 
+                  answers should be seperate from the questions  
+                  also provide 5 questions at the last 
+                  that judges a persons socio-emotional index based on the above data `;
+                  const aiResponse = await gen(prompt);
+                  bokadoka(false)
+                  return aiResponse
+              
+  };
+
+
+
+
+
+
+  const genQ = async () => {
+    bokadoka(true) ;
+    console.log("button clicked ");
+    const test = await askTest();
+    const markedContent = marked(test);
+  
+    const html_format = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+            <style>
+                #title {
+                    margin-top : 40px ;
+                    font-size: 25px;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                img {
+                    height: 35px;
+                    position: absolute;
+                    left: 20px;
+                }
+                #cont {
+                    display: flex;
+                    justify-content: center;
+                }
+                  #all{
+                   margin : 20px ; 
+                  }
+            </style>
+        </head>
+        <body>
+            <div id="cont">
+                <img src="https://www.gramurja.org/assets/images/logo/Gram%20Urja%20logo.png" alt="Gram Urja Logo">
+                <div id="title">GRAM URJA FOUNDATION</div>
+            </div>
+            <hr>
+            <div id="all">${markedContent}</div>
+        </body>
+        </html>
+    `;
+  
+    // Create a temporary container for the HTML content
+    const container = document.createElement('div');
+    container.innerHTML = html_format;
+  
+    // Convert the HTML content to a PDF and download it
+    await html2pdf()
+        .from(container)
+        .save();
+   
+    bokadoka(false)
+    
+  };
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <>
       <Card className='m-[auto]'>
         <div className="m-3 overflow-auto " >
           <div className='flex flex-wrap w-[80vw] h-[82vh] mt-[1vh]'>
-            <h1 className='w-[80vw] mb-[2vh] text-[5vh] text-bold'> 
+            <h1 className='w-[57vw] mb-[2vh] text-[5vh] text-bold'> 
               AI video decoder
             </h1>
-    
+            { pp ?
+                   (
+                   <div className='flex '>
+                    {
+ 
+                    !boka ? 
+                     
+                    <Button
+                      onClick={genQ}
+                      className='shadow-lg'
+                      sx={{
+                        background : "linear-gradient(45deg , aqua , violet , pink)" ,
+                        color : "white" , 
+                        fontWeight : "bold" , 
+                        height : "7vh"
+                        }}> 
+                        Generate Test  
+                      </Button>
+                      :
+                      <><div className='loader3 mr-2 h-[2vh]'/> <div className='loader3 mr-2 h-[2vh]'/> <div className='loader3 mr-2 h-[2vh]'/></>
+                        
+                       }
+                      </div>
+                    )
+                      :<>
+                      </>
+                  }
   
             <div className='flex justify-between w-[78vw] mb-[2vh]'>
               <div className='w-[50vw]'>

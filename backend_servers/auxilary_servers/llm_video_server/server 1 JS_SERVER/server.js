@@ -13,7 +13,7 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors()); // Enable CORS for all routes
 
 const client = new AssemblyAI({
-    apiKey: '687063c7417345c4b8de68a676b60714'
+    apiKey: process.env.KEY 
 });
 
 const audioUrl = './uploads/returned_audio.mp3';

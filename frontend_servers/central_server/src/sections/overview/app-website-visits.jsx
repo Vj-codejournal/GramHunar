@@ -9,8 +9,9 @@ import Chart, { useChart } from 'src/components/chart';
 // ----------------------------------------------------------------------
 
 export default function AppWebsiteVisits({ title, subheader, chart, ...other }) {
-  const { labels, colors, series, options } = chart;
-
+  const { labels,  series, options } = chart;
+  const colors = ["#EF0107" , "blue" , "#32de84"]
+  const nlab = labels.map((el)=>{return `day${el}`})
   const chartOptions = useChart({
     colors,
     plotOptions: {
@@ -21,9 +22,9 @@ export default function AppWebsiteVisits({ title, subheader, chart, ...other }) 
     fill: {
       type: series.map((i) => i.fill),
     },
-    labels,
+    labels : nlab,
     xaxis: {
-      type: 'datetime',
+      type: 'string',
     },
     tooltip: {
       shared: true,

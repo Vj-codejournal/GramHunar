@@ -5,6 +5,11 @@ import { curr_context } from './PdfSrc';
 import { FlashlightOffRounded } from '@mui/icons-material';
 import {marked} from 'marked'
 import { IoIosSend } from 'react-icons/io';
+import Button from '@mui/material/Button'
+import html2pdf from 'html2pdf.js';
+
+
+
 
 export default function View() {
    const [chat, setChat] = useState([]);
@@ -14,6 +19,8 @@ export default function View() {
     const [loady, setloady] = useState(false);
     const [load, setLoad] = useState(false);
     const [userInput, setUserInput] = useState('');
+    const [boka , bokadoka] = useState(false) ; 
+    const [pp , spp] = useState(false) ; 
     // Function to upload PDF
     const uploadPDF = async () => {
         try {
@@ -38,6 +45,7 @@ export default function View() {
             }
             const data = await uploadResponse.text();
             console.log(data); 
+            spp(true) ;
             setChat([{cont : "i have gone through the pdf how can i help you "  , ai : true}])
             setLoad(false)// Response from the server
         } catch (error) {
@@ -97,10 +105,148 @@ export default function View() {
         }
     };
 
+    const askTest = async () => {
+        try {
+            const response = await fetch('https://beta-free.onrender.com/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: `
+                  based on the full content 
+                  provide 10 long answer questions 
+                  with answer of all quaestions  at the end
+                  i.e make 2 sections questions section  and answers section 
+                  answers should be seperate from the questions  
+                  also provide 5 questions at the last 
+                  that judges a persons socio-emotional index based on the above data 
+                  `}),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to ask question');
+            }
+            const data = await response.json();
+            return data.result // Result from the query
+        } catch (error) {
+            console.error('Error asking question:', error);
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+    
+const genQ = async () => {
+  bokadoka(true) ;
+  console.log("button clicked ");
+  const test = await askTest();
+  const markedContent = marked(test);
+
+  const html_format = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Document</title>
+          <style>
+              #title {
+                  margin-top : 40px ;
+                  font-size: 25px;
+                  font-weight: bold;
+                  text-align: center;
+              }
+              img {
+                  height: 35px;
+                  position: absolute;
+                  left: 20px;
+              }
+              #cont {
+                  display: flex;
+                  justify-content: center;
+              }
+                #all{
+                 margin : 20px ; 
+                }
+          </style>
+      </head>
+      <body>
+          <div id="cont">
+              <img src="https://www.gramurja.org/assets/images/logo/Gram%20Urja%20logo.png" alt="Gram Urja Logo">
+              <div id="title">GRAM URJA FOUNDATION</div>
+          </div>
+          <hr>
+          <div id="all">${markedContent}</div>
+      </body>
+      </html>
+  `;
+
+  // Create a temporary container for the HTML content
+  const container = document.createElement('div');
+  container.innerHTML = html_format;
+
+  // Convert the HTML content to a PDF and download it
+  await html2pdf()
+      .from(container)
+      .save();
+ 
+  bokadoka(false)
+  
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     return (
         <>
-            <Card className="flex justify-center mb-2 p-2 text-bold text-[3vh] w-[80vw] m-[auto] justify-around">
+            <Card className="flex justify-around mb-2 p-2 text-bold text-[3vh] w-[80vw] m-[auto] justify-around">
                 AI PDF reader ✨
+                { pp ?
+                   (
+                   <div className='flex '>
+                    {
+ 
+                    !boka ? 
+                     
+                    <Button
+                      onClick={genQ}
+                      className='shadow-lg'
+                      sx={{
+                        background : "linear-gradient(45deg , aqua , violet , pink)" ,
+                        color : "white" , 
+                        fontWeight : "bold"
+                        }}> 
+                        Generate Test  
+                      </Button>
+                      :
+                      <><div className='loader3 mr-2 h-[2vh]'/> <div className='loader3 mr-2 h-[2vh]'/> <div className='loader3 mr-2 h-[2vh]'/></>
+                        
+                       }
+                      </div>
+                    )
+                      :<>
+                      </>
+                  }
             </Card>
             <Card className="flex w-[80vw] h-[80vh] m-[auto] justify-around ">
                 <div className="w-[45vw] h-[60vh] flex pt-4">

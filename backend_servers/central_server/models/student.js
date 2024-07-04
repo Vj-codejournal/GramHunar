@@ -23,6 +23,9 @@ const studentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Report',
     },
+    grade:{
+        type:String  
+    }
 });
 
 const Student = mongoose.model('Student', studentSchema);

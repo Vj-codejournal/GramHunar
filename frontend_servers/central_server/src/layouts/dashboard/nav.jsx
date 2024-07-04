@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect  , useContext , useState} from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -14,8 +14,8 @@ import { usePathname } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
+import { curr_context } from '../../contexts.jsx/Trainee'; 
 
-import { account } from 'src/_mock/account';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,6 +26,26 @@ import navConfig from './config-navigation';
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+
+
+  const now_context = useContext(curr_context);
+  const [account, set_account] = useState({
+    displayName: 'Jaydon Frankie',
+    email: 'demo@minimals.cc',
+    photoURL: '/assets/images/avatars/avatar_25.jpg',
+  });
+
+  useEffect(() => {
+    if (now_context?.trainee) {
+      set_account({
+        displayName: now_context.trainee.name,
+        email: now_context.trainee.emailId,
+        photoURL: '/assets/images/avatars/avatar_25.jpg',
+      });
+    }
+  }, [now_context]);
+
+
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');

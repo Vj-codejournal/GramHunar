@@ -27,11 +27,15 @@ const attendenceSchema = new mongoose.Schema({
         enum: ['Yes', 'No'],
         default: 'No',
     },
+    grade : {
+        type : String ,
+        default : 'C'
+    },
     Date: {
         type: String,
         required: true,
     },
-    traniee: {
+    trainee: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Traniee',
         required: true,
