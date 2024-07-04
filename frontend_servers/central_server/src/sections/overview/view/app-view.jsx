@@ -97,7 +97,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="your events"
-            total={now_context.trainee.events.length}
+            total={now_context.trainee.events.length || "0"}
             color="success"
             icon={<img alt="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAACUCAMAAADMOLmaAAAAbFBMVEX///8BAQEAAABNTU3x8fEeHh7KysqJiYmvr6/f39/k5OQ2NjY6Ojr8/Pzs7OwyMjJAQEBFRUVaWlolJSVlZWXBwcGfn5+RkZGpqanY2NhgYGBsbGwtLS3Q0NB1dXVSUlKBgYEVFRW4uLgMDAy7JFoNAAADlUlEQVR4nO2b25KjIBBAtRMTo0FzM2qMYy7//48LOBpwNHGWhtqt6vMyFezCI4rQjHgeQRAEQRAEQRDEXBibGbe06zFFvQMIzh8l2eoKkIYujAZkPgjyT4qFDIOzEymVZQo+ByB7H5dAGxfUbrxerOSJ+alv7+OKLs55I4bdmU/vb/O6i1vP7FZoFGT4O5h4p9WP8Jui1g3ZORyliHTDqOgP1QmT1aKxDC+gkOuGCUyQ6YYP9dgiTND0mFcKP79H9Evd0B8DYKUbZq9KhOMuQ2vGQvNDMWwlsZ7Nx0AQyVAErFEEy2BQMZohj3hgGB7gacvQh11kLlgO7zGqIRTmhtXP0+MZ+hAbCy53dg3BeHZbXv/a0J9h6IPxrKwOxg3DOYbZDMPQ9K29GjPkr7EafHFAjoDl1F0u+iuB9qpGDQ0ZNbzy53MhFeHO71I+1YYXHnds59jxxvO+RqqyZAilvP0C3kzLZspQdIPsKeP4qznaOzSs+LOT3K7BifcFMWyPG7YpQlQdg4pfEm9qZ4b6gLqaFPS1FO/H8G7TkFd863pgeJwU5HHPvKvo/Gz7liNDXvM9L6No89hOt2Abdz2LOH4dY4IWDeUUNJCd5Z3gxziLht8n/+DXx00fs2mIARmSIRmSoWI4tehhDpIhQNwsbLATkjiGxdIKJZ6hpZX8DRkaQ4bmkKE5ZGiOG8Op/zF35YPD2k9rhtFGIWK/Kd5oF2TN8BBve+JLvxDdqMWHrphVSvF2r/2Xx5rhVp0/vZbKr2px3Bse1OLAjaG6bgz73jBVi7eKoVJ8JEMyJEMyJEMyVIl/Neo1zkc95p32yrpB1Z/zoi4n9BMK9qVGH5y04dSE8MPvEWiObQ4ZmkOG5jgyZIO/+s9hsuok12OD/LI/32g2Oox2ko02adyT9mmnt1CLm1c2qhTHO1czB4X9+Li8Hc9GaW5DhmRIhmRIhv+Z4b+/Blsp+eX+9K2iJ6l9sZ6N7g/ad7m28uWZ2ehEsZPZFxpkaA4ZmlOKD26M6y7Fa87SbsAVtHsHzBA7F6Cxs3lWbNsA8/1cJ5CbQy3stovETT6aVyw+t4Z7gq3IvOUJkB4gMVGAnfHjMiS6iEtPN8YVtXs2+Jh/KzFbsczlhSP1QfndP+DD6/xCEZRbDtA/k5SOJ7R3hPi2HtdRNOD98yb8+ST5Avsep+sSz0861mG+xqOoEbYSEgRBEARBEARBEATx7/IHPoNVUfFk8qwAAAAASUVORK5CYII=" />}
           />
@@ -106,7 +106,7 @@ export default function AppView() {
         <Grid xs={12} sm={6} md={3}>
           <AppWidgetSummary
             title="students under"
-            total={now_context.trainee.students.length}
+            total={now_context.trainee.students.length || "0"}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
