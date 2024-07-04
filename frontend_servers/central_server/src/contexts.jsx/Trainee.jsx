@@ -3,7 +3,7 @@ import React, { useEffect, useContext, createContext, useState } from 'react';
 export const curr_context = createContext();
 
 const Trainee = (props) => {
-   const backend_url = "http://localhost:7000";
+   const backend_url = "https://gramhunar.onrender.com";
    const [traineeID, set_traineeID] = useState(localStorage.getItem('traineeID') || "");
    const [trainee, set_trainee] = useState(null);
 
