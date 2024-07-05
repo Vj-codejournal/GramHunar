@@ -1,4 +1,7 @@
 ## currently under "Beta testing"
+## SERVER ARCHITECTURE 
+![alt text](https://res.cloudinary.com/dogfmhpfc/image/upload/v1720179973/snlwtmqj93hozicd0mfo.jpg)
+
 
 ### beta-phasing ( currently under execution )
 * gamma 1 : server intialiisation done 
